@@ -1,0 +1,4 @@
+module CMustache [system][extern_c] {
+    header "../mustach.h"
+    export *
+}
