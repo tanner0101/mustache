@@ -4,50 +4,55 @@ struct MustacheContext {
     var stack: [MustacheData]
     var index: Int
 
-    var data: MustacheData {
-        guard let current = self.stack.last else {
-            fatalError("stack popped too many times")
-        }
-        return current
-    }
-
     init(data: [String: MustacheData]) {
         self.stack = [.dictionary(data)]
         self.index = 0
     }
 
     func put(name: String) -> String {
-        switch self.data {
-        case .array(let array):
-            guard case .dictionary(let data) = array[self.index] else {
-                return ""
-            }
-            guard let value = data[name] else {
-                return ""
-            }
-            switch value {
-            case .string(let string):
-                return string
-            case .dictionary, .array:
-                return ""
-            }
-        case .dictionary(let data):
-            guard let value = data[name] else {
-                return ""
-            }
-            switch value {
-            case .string(let string):
-                return string
-            case .dictionary, .array:
-                return ""
-            }
-        case .string:
+        guard let data = self.get(name: name) else {
             return ""
+        }
+        switch data {
+        case .array, .dictionary:
+            return ""
+        case .string(let string):
+            return string
         }
     }
 
+    func get(name: String) -> MustacheData? {
+        var stack = self.stack
+        while let context = stack.popLast() {
+            if let value = self.get(name: name, data: context) {
+                return value
+            }
+        }
+        return nil
+    }
+
+    func get(name: String, data: MustacheData) -> MustacheData? {
+        var current: MustacheData = data
+
+        var it = name.split(separator: ".").makeIterator()
+        while let path = it.next() {
+            guard case .dictionary(let data) = current else {
+                return nil
+            }
+            guard let value = data[String(path)] else {
+                return nil
+            }
+            current = value
+        }
+
+        return current
+    }
+
     mutating func next() -> Bool {
-        switch self.data {
+        guard let data = self.stack.last else {
+            fatalError("stack popped too far")
+        }
+        switch data {
         case .array(let array):
             if self.index + 1 < array.count {
                 index += 1
@@ -61,20 +66,15 @@ struct MustacheContext {
     }
 
     mutating func enter(name: String) -> Bool {
-        guard case .dictionary(let data) = self.data else {
+        guard let data = self.get(name: name) else {
             return false
         }
-
-        if let value = data[name] {
-            switch value {
-            case .dictionary, .array:
-                self.stack.append(value)
-                return true
-            case .string(let string):
-                return !["false", "0"].contains(string.lowercased())
-            }
-        } else {
-            return false
+        switch data {
+        case .dictionary, .array:
+            self.stack.append(data)
+            return true
+        case .string(let string):
+            return !["false", "0"].contains(string.lowercased())
         }
     }
 
