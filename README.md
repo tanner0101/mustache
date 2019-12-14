@@ -1,3 +1,3 @@
 # Mustache
 
-A description of this package.
+Swift wrapper around C mustache parser.
