@@ -74,7 +74,12 @@ struct MustacheContext {
             self.stack.append(data)
             return true
         case .string(let string):
-            return !["false", "0"].contains(string.lowercased())
+            if !["false", "0"].contains(string.lowercased()) {
+                self.stack.append(data)
+                return true
+            } else {
+                return false
+            }
         }
     }
 
