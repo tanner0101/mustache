@@ -98,6 +98,9 @@ struct MustacheContext {
                 guard let context = closure?.assumingMemoryBound(to: MustacheContext.self).pointee else {
                     return MUSTACH_ERROR_SYSTEM
                 }
+                guard let file = file else {
+                    return MUSTACH_ERROR_SYSTEM
+                }
                 fputs(context.put(name: name), file)
                 return MUSTACH_OK
             },
