@@ -9,6 +9,8 @@
 #ifndef _mustach_h_included_
 #define _mustach_h_included_
 
+#include <stdio.h>
+
 struct mustach_sbuf; /* see below */
 
 /**
