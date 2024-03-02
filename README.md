@@ -1,3 +1,3 @@
 # Mustache
 
-Swift wrapper around C mustache parser.
+A Swift wrapper around the [mustach parser](http://mustache.github.io/).
