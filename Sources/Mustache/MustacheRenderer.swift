@@ -10,7 +10,7 @@ public struct MustacheRenderer {
         var context = MustacheContext(data: data)
         var itf = context.itf
 
-        let status = mustach(template, &itf, &context, &result, &size)
+        let status = mustach_mem(template, 0, &itf, &context, 0, &result, &size)
         guard status == MUSTACH_OK else {
             throw MustacheError(status: status)!
         }
