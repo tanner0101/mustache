@@ -1,0 +1,6 @@
+This product contains the mustach.h and mustach.c files from the mustach parser distribution.
+
+  * LICENSE (ISC):
+    * https://gitlab.com/jobol/mustach/-/blob/b55963fd0ff2d671f8c3546c26da4238152b0f99/LICENSE.txt
+  * HOMEPAGE:
+    * http://mustache.github.io/
