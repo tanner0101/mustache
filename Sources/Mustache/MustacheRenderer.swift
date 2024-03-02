@@ -9,8 +9,10 @@ public struct MustacheRenderer {
 
         var context = MustacheContext(data: data)
         var itf = context.itf
-
-        let status = mustach_mem(template, 0, &itf, &context, 0, &result, &size)
+        
+        let status = withUnsafeMutablePointer(to: &context) { context in
+            mustach_mem(template, 0, &itf, context, Mustach_With_AllExtensions, &result, &size)
+        }
         guard status == MUSTACH_OK else {
             throw MustacheError(status: status)!
         }
